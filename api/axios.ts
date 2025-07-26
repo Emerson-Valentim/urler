@@ -1,11 +1,14 @@
-import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
+import axios from "axios";
+import type { AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 
 
 const authInterceptor = (config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem("token");
 
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    // Check if token already starts with "Bearer " to avoid duplication
+    const authHeader = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+    config.headers.Authorization = authHeader;
   }
 
   return config;

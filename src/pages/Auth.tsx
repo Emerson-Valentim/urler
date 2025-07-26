@@ -1,14 +1,16 @@
 import { Box, Button, Input, VStack, Tabs } from "@chakra-ui/react";
 import { usePostAccount, usePostSignin } from "../../api/client";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { toaster } from "../components/ui/toaster";
 import { AxiosError } from "axios";
+import { AuthContext } from "@/contexts";
 
 const TABS = ["signin", "signup"] as const;
 
 export function Auth() {
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
 
   const [tab, setTab] = useState<(typeof TABS)[number]>("signin");
   const [username, setUsername] = useState("");
@@ -27,7 +29,8 @@ export function Auth() {
         setPassword("");
       },
       onError: (error: AxiosError<{ error: string }>) => {
-        const message = error.response?.data?.error || "Failed to create account";
+        const message =
+          error.response?.data?.error || "Failed to create account";
         toaster.error({
           title: "Sign up failed",
           description: message,
@@ -42,7 +45,8 @@ export function Auth() {
 
   const { mutate: signin } = usePostSignin({
     mutation: {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        login(data.data.token);
         navigate("/dashboard");
       },
       onError: (error: AxiosError<{ error: string }>) => {
