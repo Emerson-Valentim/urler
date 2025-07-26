@@ -14,13 +14,13 @@ import {
 import { AxiosError } from "axios";
 import { useCallback, useState } from "react";
 import { FiCopy, FiExternalLink } from "react-icons/fi";
-import { useGetUrl, usePostUrl, type Url } from "../../api/client";
+import { useGetUrl, usePostUrl } from "../../api/client";
 import { toaster } from "../components/ui/toaster";
 
 export function Dashboard() {
   const { refetch, data } = useGetUrl();
 
-  const [shortenedUrls] = useState<Url[]>(data?.data || []);
+  const shortenedUrls = data?.data || [];
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const copyToClipboard = async (text: string, fieldName: string) => {
